@@ -4,7 +4,6 @@
 
 ## Start
 
-* [开始使用](start/how-to-use/README.md)
   * [安装与准备](start/how-to-use/install.md)
   * [快速开始](start/how-to-use/quick-start.md)
   * [CLI 参数](start/how-to-use/cli.md)
