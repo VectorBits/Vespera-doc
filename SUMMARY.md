@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Vespera 文档](README.md)
+* [Vespera](README.md)
 
 ## Start
 
