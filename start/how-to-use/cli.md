@@ -71,13 +71,21 @@
   2) 否则如果提供 `-range`：按区块范围下载  
   3) 否则：从数据库记录的最后区块继续下载
 
-## Benchmark
+## Benchmark    (测试功能,未完善)
 
-### `-b` / `--benchmark`
+### `-b` / `--benchmark`   
 - 运行基准测试（本质上批量调用 mode1）
 
-### `--database`
-- 基准数据集文件路径，默认 `benchmark/dataset_defihack.json`
+### `--database`  
+- 基准数据集文件路径，默认 `benchmark/dataset.json`
+
+在 `src/internal/benchmark/runner.go` 中可以修改。
+
+```Go
+	if datasetPath == "" { //qhello 基准测试：在此处修改数据集
+		datasetPath = "benchmark/dataset.json"
+	}
+```
 
 ## 已弃用参数（不推荐）
 
