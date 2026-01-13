@@ -63,6 +63,12 @@ solc-select use 0.8.23
 solc --version
 ```
 
+可选：安装全部 solc 版本（通过 py-solc-x/solcx，适合离线/多版本扫描场景）：
+
+```bash
+python3 scripts/install_all_solc.py
+```
+
 ### 安装 Foundry
 
 ```bash
