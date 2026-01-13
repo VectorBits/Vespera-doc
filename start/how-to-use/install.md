@@ -33,16 +33,10 @@ go mod download
 
 ### 初始化配置文件
 
-首次运行会自动生成 `config/settings.yaml`（从内置的 `src/config/settings.example.yaml` 拷贝）。
+首次运行会自动生成 `config/settings.yaml`
 
-也可以手动创建：
 
-```bash
-mkdir -p config
-cp src/config/settings.example.yaml config/settings.yaml
-```
-
-然后编辑 `config/settings.yaml` 填写：
+编辑 `config/settings.yaml` 填写：
 - 数据库连接信息
 - AI 提供商的 API Key / BaseURL / Model
 - 链 RPC 与 Explorer API Key（下载流程会用到）
@@ -53,7 +47,7 @@ cp src/config/settings.example.yaml config/settings.yaml
 mysql -u root -p < config/migrate_tables.sql
 ```
 
-### 安装 Mode 2 工具链
+### 安装 Mode 2 依赖
 ```bash
 pip3 install slither-analyzer crytic-compile py-solc-x
 ```
@@ -64,7 +58,7 @@ pip3 install slither-analyzer crytic-compile py-solc-x
 
 ```bash
 pip3 install solc-select
-solc-select install 0.8.23
+solc-select install 0.8.23  
 solc-select use 0.8.23
 solc --version
 ```
@@ -74,4 +68,10 @@ solc --version
 ```bash
 curl -L https://foundry.paradigm.xyz | bash
 foundryup
+```
+
+### 编译
+
+```bash
+go run src/main.go -o vespera
 ```

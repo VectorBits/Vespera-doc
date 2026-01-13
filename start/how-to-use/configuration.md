@@ -54,7 +54,7 @@ chains:
 - `explorer.api_keys` 支持多个，适合分摊限速（下载流程会用到）
 - `table_name` 是数据库表名映射（对应 `migrate_tables.sql` 里的表）
 
-### 数据库配置
+### 数据库配置示例
 
 ```yaml
 database:
