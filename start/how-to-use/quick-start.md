@@ -10,6 +10,9 @@
 go run src/main.go --help
 ```
 
+此时会在 `config/settings.yaml` 生成默认配置。请编辑该文件填入你的数据库账号密码和 API Key。
+**无需手动建表，程序连接数据库后会自动初始化。**
+
 也可以先编译：
 
 ```bash

@@ -5,12 +5,12 @@ Mode 2 先用 Slither 做静态分析，再用模型对结果做验证与过滤�
 ## 前置依赖
 
 - Python 3.8+
-- Slither（`pip3 install slither-analyzer`）
+- Slither（`pip3 install slither-analyzer --break-system-packages`）
 
 如需更好地处理多文件工程与编译器版本问题，建议同时安装：
 
 ```bash
-pip3 install crytic-compile py-solc-x
+pip3 install crytic-compile py-solc-x --break-system-packages
 ```
 
 ## 执行方式

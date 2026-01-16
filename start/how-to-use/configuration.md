@@ -52,7 +52,7 @@ chains:
 说明：
 - `rpc_urls` 支持多个，会用于轮询/故障切换
 - `explorer.api_keys` 支持多个，适合分摊限速（下载流程会用到）
-- `table_name` 是数据库表名映射（对应 `migrate_tables.sql` 里的表）
+- `table_name` 是数据库表名映射（程序启动时会自动根据此名创建/迁移表）
 
 ### 数据库配置示例
 
@@ -64,6 +64,8 @@ database:
   password: "123456"
   name: "solidity_excavator"
 ```
+
+> **注意**：只需在配置中指定数据库名（默认为 `solidity_excavator`）。程序启动时，如果该数据库不存在，会自动创建；所有配置的 `table_name` 对应的表也会自动创建。无需手动运行 SQL 脚本。
 
 ## 常见配置组合
 

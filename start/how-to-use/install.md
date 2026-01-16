@@ -12,8 +12,6 @@ curl -fsSL http://github.com/vectorbits/vespera/install.sh | bash
 - 安装 Mode 2 工具链（Slither / crytic-compile / py-solc-x）
 - 安装 solc（通过 solc-select）与 solcx 相关环境
 - 安装 Foundry
-- 交互式输入 MySQL 连接信息，并写入 `config/settings.yaml`
-- 创建数据库并执行 `config/migrate_tables.sql`
 
 ## 从源码构建（Build from Source）
 
@@ -35,21 +33,14 @@ go mod download
 
 首次运行会自动生成 `config/settings.yaml`
 
-
 编辑 `config/settings.yaml` 填写：
-- 数据库连接信息
+- 数据库连接信息（只需填写账号密码，程序会自动创建库和表）
 - AI 提供商的 API Key / BaseURL / Model
 - 链 RPC 与 Explorer API Key（下载流程会用到）
 
-### 初始化数据库表
-
-```bash
-mysql -u root -p < config/migrate_tables.sql
-```
-
 ### 安装 Mode 2 依赖
 ```bash
-pip3 install slither-analyzer crytic-compile py-solc-x
+pip3 install slither-analyzer crytic-compile py-solc-x --break-system-packages
 ```
 
 ### 安装 solc
@@ -57,7 +48,7 @@ pip3 install slither-analyzer crytic-compile py-solc-x
 推荐使用版本管理工具安装（更方便切换不同 Solidity 版本）：
 
 ```bash
-pip3 install solc-select
+pip3 install solc-select --break-system-packages
 solc-select install 0.8.23  
 solc-select use 0.8.23
 solc --version
@@ -79,5 +70,7 @@ foundryup
 ### 编译
 
 ```bash
-go run src/main.go -o vespera
+go build -o vespera src/main.go
+# 运行
+./vespera -h
 ```
