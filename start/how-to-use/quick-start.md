@@ -33,7 +33,7 @@ go run src/main.go -d -c eth -file ./addresses.txt
 Mode 1：定向扫描（模板驱动）
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t contract -addr 0xYourAddress
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s dao_governance -i dao_governance
 ```
 
 Mode 2：混合扫描（Slither + AI 验证）

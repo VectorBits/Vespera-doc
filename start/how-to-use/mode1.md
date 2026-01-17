@@ -12,20 +12,20 @@ Mode 1 面向“目标明确”的审计式扫描：用 Prompt 模板（`.tmpl`�
 单地址：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t contract -addr 0xYourAddress
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s dao_governance -i dao_governance
 ```
 
-从 DB 扫描（可选用 `-range start-end` 按 createblock 过滤）：
+从 DB 扫描（不传 `-t` 默认就是 DB 目标；可用 `-t start-end` 按 createblock 过滤）：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t db
-go run src/main.go -m mode1 -ai deepseek -t db -range 20000000-20001000
+go run src/main.go -m mode1 -ai deepseek -s dao_governance -i dao_governance
+go run src/main.go -m mode1 -ai deepseek -t 20000000-20001000 -s dao_governance -i dao_governance
 ```
 
 从文件扫描：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t file -file ./targets.txt
+go run src/main.go -m mode1 -ai deepseek -t ./targets.txt -s dao_governance -i dao_governance -c eth -proxy http://127.0.0.1:7897
 ```
 
 完整参数与 `-t` 的智能解析规则请看 [CLI 参数](cli.md)。
@@ -40,8 +40,8 @@ go run src/main.go -m mode1 -ai deepseek -t file -file ./targets.txt
   - 扫描目录全部特征：`-i all`
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -i hourglassvul.toml -t contract -addr 0xYourAddress
-go run src/main.go -m mode1 -ai deepseek -i all -t db
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s generic_scan -i hourglassvul
+go run src/main.go -m mode1 -ai deepseek -s generic_scan -i all
 ```
 
 模板输出约束请参考 [模型输出 JSON 格式指南](ai-json-format.md)（Mode 1 的 AnalysisResult）。

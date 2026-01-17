@@ -7,20 +7,20 @@ Vespera 的 CLI 以 `-t` 的“智能解析”为入口，并配合统一参数�
 扫描单个合约（Mode 1）：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s dao_governance -i dao_governance
 ```
 
 扫描数据库中的目标（Mode 1 / Mode 2）：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek
+go run src/main.go -m mode1 -ai deepseek -s dao_governance -i dao_governance
 go run src/main.go -m mode2 -ai deepseek
 ```
 
 按区块范围扫描 DB 目标（`start-end` 会被识别为 DB 范围过滤）：
 
 ```bash
-go run src/main.go -m mode1 -ai deepseek -t 20000000-20001000
+go run src/main.go -m mode1 -ai deepseek -t 20000000-20001000 -s dao_governance -i dao_governance
 ```
 
 从地址文件扫描（文件路径会被自动识别）：
@@ -62,7 +62,7 @@ go run src/main.go -ai deepseek -m mode1 -t ./Contract-list/gvtest.txt -s dao_go
 
 ```bash
 # 地址 / 文件 / 范围会被自动识别
-go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s dao_governance -i dao_governance
 
 go run src/main.go -m mode1 -ai deepseek -t ./targets.txt
 
