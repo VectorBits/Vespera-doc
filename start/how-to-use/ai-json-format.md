@@ -18,7 +18,7 @@ Mode 1 的 `.tmpl` 模板建议输出一个根对象 `AnalysisResult`，用于�
   "contract_address": "0x...（可选）",
   "risk_score": 0,
   "vuln_probability": "High/Medium/Low 或 85%（可选）",
-  "severity": "Critical/High/Medium/Low/Safe（可选）",
+  "severity": "Critical/High/Medium/Low/None/Unknown（可选；Safe 也可用，会被当作 None）",
   "summary": "简明扼要的审计总结，概括主要发现（可选）",
   "recommendations": ["建议 1...", "建议 2...（可选）"],
   "vulnerabilities": [
@@ -47,7 +47,7 @@ Mode 1 的 `.tmpl` 模板建议输出一个根对象 `AnalysisResult`，用于�
 | `contract_address` | `string` | 否 | 合约地址（如果 Prompt 上下文包含）。 |
 | `risk_score` | `number` / `string` | 否 | 风险评分（0-100），解析器允许数字或字符串。 |
 | `vuln_probability` | `string` | 否 | 漏洞概率（如 `High`、`85%`）。 |
-| `severity` | `string` | 否 | 合约整体风险等级（推荐：`Critical/High/Medium/Low/Safe`）。 |
+| `severity` | `string` | 否 | 合约整体风险等级（推荐：`Critical/High/Medium/Low/None/Unknown`；`Safe` 会被当作 `None`）。 |
 | `summary` | `string` | 否 | 审计总结。 |
 | `recommendations` | `[]string` | 否 | 整体改进建议列表。 |
 | `vulnerabilities` | `array` | 建议 | 漏洞列表；无漏洞建议返回空数组 `[]`。 |
@@ -75,7 +75,7 @@ Mode 2 会用 Slither 先产出 detectors，再对每条结果进行“逐条验
 ```json
 {
   "is_vulnerability": true,
-  "severity": "Critical/High/Medium/Low/None",
+  "severity": "Critical/High/Medium/Low/None/Unknown（Safe 会被当作 None）",
   "reason": "简要说明判断理由（建议 100 字以内）",
   "vuln_type": "保持与 detector 名称一致"
 }

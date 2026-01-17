@@ -1,95 +1,127 @@
 # CLI 参数
 
-推荐优先使用“统一参数”（`-range` / `-addr` / `-file`），避免使用已弃用的老参数。
+Vespera 的 CLI 以 `-t` 的“智能解析”为入口，并配合统一参数：`-range / -addr / -file`。旧参数仅用于兼容，不作为示例重点。
 
-## 扫描相关
+## 最常用的 4 条命令
 
-### `-m`
-- 扫描模式：`mode1` | `mode2` | `mode3`（mode3 目前未实现）
+扫描单个合约（Mode 1）：
 
-### `-ai`
-- AI 提供商：`chatgpt5` | `deepseek` | `gemini` | `local-llm`
+```bash
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress
+```
 
-### `-s`
-- 策略/提示词模板名称
-- Mode 1 默认 `generic_scan`
-- Mode 2 为空或 `all` 时会回退到 `default`
-- 模板路径：`src/strategy/prompts/<mode>/<name>.tmpl`
+扫描数据库中的目标（Mode 1 / Mode 2）：
+
+```bash
+go run src/main.go -m mode1 -ai deepseek
+go run src/main.go -m mode2 -ai deepseek
+```
+
+按区块范围扫描 DB 目标（`start-end` 会被识别为 DB 范围过滤）：
+
+```bash
+go run src/main.go -m mode1 -ai deepseek -t 20000000-20001000
+```
+
+从地址文件扫描（文件路径会被自动识别）：
+
+```bash
+go run src/main.go -ai deepseek -m mode1 -t ./Contract-list/gvtest.txt -s dao_governance -i dao_governance -c eth -proxy http://127.0.0.1:7897
+```
+
+## 扫描参数
+
+### `-m`（模式）
+- `mode1`：定向扫描（模板驱动，适合“明确目标”）
+- `mode2`：混合扫描（Slither + AI 验证，适合批量快速筛查）
+
+### `-ai`（模型/提供商）
+- `chatgpt5` / `openai` / `gpt4`：读取 `settings.yaml` 的 `ai.openai`
+- `deepseek`：读取 `ai.deepseek`
+- `gemini`：读取 `ai.gemini`
+- `local-llm` / `ollama`：读取 `ai.local_llm`（不需要 `api_key`）
+
+### `-s`（提示词模板）
+- 模板位置：`strategy/prompts/<mode>/<name>.tmpl`（也支持从 `src/strategy/...` 运行）
+- `mode1` 下 `-s default`（或空/`all`）会回退到 `generic_scan`
+- `mode2` 下 `-s default`（或空）会回退到 `default`
 - 模板输出 JSON 需符合 [模型输出 JSON 格式指南](ai-json-format.md)
 
-### `-t`
-- 目标来源：`db` | `file` | `contract` | `last`
-- 支持写成 `type:value` 的形式（例如 `-t contract:0x...`、`-t file:./targets.txt`）
+### `-i`（输入特征文件，仅 Mode 1）
+- 用于 Mode 1 的漏洞特征/实验库（TOML）
+- 支持写文件名或相对路径：
+  - `hourglassvul.toml`（会在 `strategy/exp_libs/mode1/` 或 `src/strategy/exp_libs/mode1/` 中查找）
+  - `./path/to/xxx.toml`（按你给的路径读取）
+- `-i all`：扫描 `strategy/exp_libs/mode1/*.toml`（找不到会回退尝试 `src/strategy/exp_libs/mode1/*.toml`）
 
-### `-range`
-- 区块范围：`start-end`
-- 对 `-t db` 生效（过滤 DB 中 createblock 范围）
-- 对 `-d` 下载也生效
+### `-t`（目标来源 / 智能解析）
+- 推荐用法：直接把“地址 / 文件 / 区块范围”传给 `-t`，程序会自动识别
+- 也支持显式指定来源：`db | file | contract | last`（一般不需要）
 
-### `-addr`
-- 目标合约地址
-- 配合 `-t contract`
+常用写法（更短）：
 
-### `-file`
-- 目标文件路径（当 `-t file` 时）或下载地址文件（当 `-d` 时）
-- 文件内容支持：
-  - 一行一个地址（txt）
-  - YAML 列表（`- file...`）
-  - YAML 包装结构：`targets:` 或 `addresses:`
+```bash
+# 地址 / 文件 / 范围会被自动识别
+go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress
 
-### `-i`
-- Mode 1 专用：指定漏洞特征 TOML 文件（位于 `src/strategy/exp_libs/mode1/`）
-- 可选值：
-  - 具体文件名（或路径）
-  - `all`（扫描 `exp_libs/mode1/` 目录下全部 `.toml`）
+go run src/main.go -m mode1 -ai deepseek -t ./targets.txt
+
+go run src/main.go -m mode2 -ai deepseek -t 20000000-20001000
+```
+
+### `-addr`（单地址）
+- 一般不需要显式填写：`-t 0x...` 会自动写入目标地址
+- 仍支持显式指定（一般不需要）
+
+### `-file`（目标文件）
+- 一般不需要显式填写：`-t ./targets.txt` 会自动识别为目标文件
+- `-d`：下载地址文件
+- 文件内容：一行一个地址（最稳妥）；也支持 YAML 列表/包装结构（由读取器决定）
+
+### `-range`（区块范围）
+- 格式：`start-end`
+- `-t` 传入 `start-end` 会自动按 DB 中的 `createblock` 过滤目标
+- `-d`：按区块范围下载
+
+### `-c`（链）
+- `eth | bsc | base`
 
 ### `-concurrency`
-- 并发 worker 数，默认 4
+- 并发 worker 数（默认 4）
 
 ### `-timeout`
-- 单次 AI 请求超时（`time.Duration` 格式，例如 `60s`、`2m`），默认 `120s`
-
-### `-r`
-- 报告输出目录，默认 `reports`
+- 单次 AI 请求超时（Go `time.Duration`，如 `60s`、`2m`；默认 `120s`）
 
 ### `-proxy`
 - HTTP 代理，例如 `http://127.0.0.1:7897`
-- 影响下载/请求 explorer 与 AI 请求
+- 同时影响下载/explorer/RPC 相关请求与 AI 请求
 
-### `-c`
-- 链名称：`eth` | `bsc` | `base`
+### `-r`
+- 报告输出目录（默认 `reports`）
 
 ### `-v`
-- 打印更详细的配置与运行信息
+- 更详细的运行信息；并影响 AI 日志（Verbose 才记录完整 prompt/response，否则记录 hash）
 
-## 下载相关
+## 下载参数
 
 ### `-d`
 - 启动下载流程（写入 MySQL）
-- 行为优先级：
-  1) 如果提供 `-file`：按地址列表下载  
-  2) 否则如果提供 `-range`：按区块范围下载  
-  3) 否则：从数据库记录的最后区块继续下载
+- 优先级：
+  - `-file`：按地址列表下载
+  - `-range`：按区块范围下载
+  - 否则：从 DB 记录的最后区块继续
 
-## Benchmark    (测试功能,未完善)
+## Benchmark（实验性）
 
-### `-b` / `--benchmark`   
+### `-b` / `--benchmark`
 - 运行基准测试（本质上批量调用 mode1）
 
-### `--database`  
-- 基准数据集文件路径，默认 `benchmark/dataset.json`
+### `--database`
+- 数据集路径（默认 `benchmark/dataset.json`）
 
-在 `src/internal/benchmark/runner.go` 中可以修改。
-
-```Go
-	if datasetPath == "" { //qhello 基准测试：在此处修改数据集
-		datasetPath = "benchmark/dataset.json"
-	}
-```
-
-## 已弃用参数（不推荐）
-
-- `-d-range`：请用 `-range`
-- `-t-block`：请用 `-range`
-- `-t-file`：请用 `-file`
-- `-t-address`：请用 `-addr`
+## 已弃用参数（兼容用，不推荐）
+旧参数仍可用，但不会在示例中使用：
+- `-d-range` → `-range`
+- `-t-block` → `-range`
+- `-t-file` → `-file`
+- `-t-address` → `-addr`
