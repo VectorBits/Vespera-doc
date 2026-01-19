@@ -39,7 +39,7 @@ go run src/main.go -m mode1 -ai deepseek -t 0xYourAddress -s dao_governance -i d
 Mode 2：混合扫描（Slither + AI 验证）
 
 ```bash
-go run src/main.go -m mode2 -ai deepseek -t db
+go run src/main.go -m mode2 -ai deepseek
 ```
 
 ## 4) 查看输出

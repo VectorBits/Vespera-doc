@@ -29,13 +29,13 @@ pip3 install crytic-compile py-solc-x --break-system-packages
 从 DB 扫描：
 
 ```bash
-go run src/main.go -m mode2 -ai deepseek -t db
+go run src/main.go -m mode2 -ai deepseek
 ```
 
 单地址扫描：
 
 ```bash
-go run src/main.go -m mode2 -ai deepseek -t contract -addr 0xYourAddress
+go run src/main.go -m mode2 -ai deepseek -t 0xYourAddress
 ```
 
 持续监控（新合约目标流式进入扫描队列）：
@@ -49,7 +49,7 @@ go run src/main.go -m mode2 -ai deepseek -t last
 - `-concurrency`：并发 worker 数
 - `-timeout`：单次 AI 请求超时
 - `-proxy`：下载与 AI 请求使用的 HTTP 代理
-- `-range`：当 `-t db` 时，过滤区块范围内的合约
+- `-range`：DB 目标下的区块过滤（例如 1000-2000）
 - `-s`：选择 Mode 2 的验证模板（为空或 `all` 回退到 `default`）
 
 完整参数请看 [CLI 参数](cli.md)。
