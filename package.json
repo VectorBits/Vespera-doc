@@ -1,0 +1,30 @@
+{
+  "name": "vespera-doc",
+  "version": "1.0.0",
+  "description": "Vespera 是一个面向 EVM 智能合约的漏洞检测框架，提供从“批量目标获取”到“扫描与报告输出”的一体化流程，适合研究、审计与工程化落地。",
+  "main": "index.js",
+  "scripts": {
+    "start": "honkit serve",
+    "build": "honkit build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VectorBits/Vespera-doc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VectorBits/Vespera-doc/issues"
+  },
+  "homepage": "https://github.com/VectorBits/Vespera-doc#readme",
+  "devDependencies": {
+    "gitbook-plugin-back-to-top-button": "^0.1.4",
+    "gitbook-plugin-chapter-fold": "^0.0.4",
+    "gitbook-plugin-code": "^0.1.0",
+    "gitbook-plugin-hide-element": "^0.0.4",
+    "gitbook-plugin-splitter": "^0.0.8",
+    "honkit": "^6.1.5"
+  }
+}

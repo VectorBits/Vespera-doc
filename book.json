@@ -1,0 +1,18 @@
+{
+    "title": "Vespera Doc",
+    "language": "zh-hans",
+    "plugins": [
+        "back-to-top-button",
+        "chapter-fold",
+        "code",
+        "hide-element"
+    ],
+    "pluginsConfig": {
+        "hide-element": {
+            "elements": [".gitbook-link"]
+        }
+    },
+    "styles": {
+        "website": "styles/website.css"
+    }
+}
