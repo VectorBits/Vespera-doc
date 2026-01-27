@@ -83,7 +83,7 @@ go run src/main.go -m mode2 -ai deepseek -t 20000000-20001000
 - `-t` 传入 `start-end` 会自动按 DB 中的 `createblock` 过滤目标
 - `-d`：按区块范围下载
 
-### `-c`（链）
+### `-c`（链）  可以自定义配置更多链
 - `eth | bsc | base`
 
 ### `-concurrency`
