@@ -15,10 +15,10 @@ Mode 1 的模板位于 `src/strategy/prompts/mode1/*.tmpl`，用于组织“输�
 
 模板通常包含以下可选字段，实际是否渲染由条件控制：
 
-- `{{if .EnableCallGraph}} ... {{end}}`：是否启用调用图增强上下文。
-- `{{.CallGraphInfo}}`：调用图统计信息，用于概览调用关系。
-- `{{.CallersCode}}`：调用者代码片段（谁调用了公开函数）。
-- `{{.CalleesCode}}`：被调用者代码片段（公开函数调用了谁）。
+- `{% raw %}{{if .EnableCallGraph}} ... {{end}}{% endraw %}`：是否启用调用图增强上下文。
+- `{% raw %}{{.CallGraphInfo}}{% endraw %}`：调用图统计信息，用于概览调用关系。
+- `{% raw %}{{.CallersCode}}{% endraw %}`：调用者代码片段（谁调用了公开函数）。
+- `{% raw %}{{.CalleesCode}}{% endraw %}`：被调用者代码片段（公开函数调用了谁）。
 
 Mode 1 的调用图增强模板示例可参考 [callgraph_enhanced.tmpl](../../../src/strategy/prompts/mode1/callgraph_enhanced.tmpl)。
 
@@ -28,10 +28,10 @@ Mode 1 的调用图增强模板示例可参考 [callgraph_enhanced.tmpl](../../.
 
 建议在模板的“输出要求”中固定以下约束片段，并按本页的字段说明输出：
 
-```text
+````text
 输出要求：
 请仅输出一个合法的 JSON 对象，不要包含 Markdown 标记（如 ```json）。字段名必须使用 snake_case。建议始终返回 vulnerabilities（无漏洞返回空数组 []）。除下述字段外，可输出额外字段，解析器会忽略未识别字段。
-```
+````
 
 ### 提示词解析与变量注入
 
@@ -44,18 +44,16 @@ Mode 1 的调用图增强模板示例可参考 [callgraph_enhanced.tmpl](../../.
 
 #### Mode 1 可用变量
 
-- `ContractAddress`：目标合约地址
-- `ContractCode`：目标合约源码（可能是清洗/裁剪后的版本）
-- `Strategy`：当前模板/策略名
-- `InputFileContent`：`-i` 输入文件处理后的内容
-- `EnableCallGraph`：是否启用调用图上下文
-- `CallGraphInfo`：调用图概要信息
-- `CallersCode`：调用者代码片段
-- `CalleesCode`：被调用者代码片段
-- `EnrichedContext`：完整调用链上下文
-- `TotalFunctions`：函数总数
-- `PublicFunctions`：公开函数数量
-- `InternalFunctions`：内部函数数量
+| 变量名 | 说明 |
+| :--- | :--- |
+| `EnableCallGraph` | 是否启用调用图上下文 |
+| `CallGraphInfo` | 调用图概要信息 |
+| `CallersCode` | 调用者代码片段 |
+| `CalleesCode` | 被调用者代码片段 |
+| `EnrichedContext` | 完整调用链上下文 |
+| `TotalFunctions` | 函数总数 |
+| `PublicFunctions` | 公开函数数量 |
+| `InternalFunctions` | 内部函数数量 |
 
 #### 调用图上下文触发条件
 
@@ -71,7 +69,7 @@ Mode 1 的 `.tmpl` 模板建议输出一个根对象 `AnalysisResult`，用于�
 
 ### 输出约束片段（用于 `.tmpl` 的“输出要求”部分）
 
-```text
+````text
 输出要求：
 请仅输出一个合法的 JSON 对象，不要包含 Markdown 标记（如 ```json）。字段名必须使用 snake_case。建议始终返回 vulnerabilities（无漏洞返回空数组 []）。除下述字段外，可输出额外字段，解析器会忽略未识别字段。
 
@@ -97,7 +95,7 @@ Mode 1 的 `.tmpl` 模板建议输出一个根对象 `AnalysisResult`，用于�
     }
   ]
 }
-```
+````
 
 ### 字段说明（与解析器结构一致）
 
