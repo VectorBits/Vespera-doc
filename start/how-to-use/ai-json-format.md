@@ -4,6 +4,67 @@
 
 代码参考：解析逻辑位于 [parser.go](../../../src/internal/ai/parser/parser.go)。
 
+## Prompt 模板规则（Mode 1）
+
+Mode 1 的模板位于 `src/strategy/prompts/mode1/*.tmpl`，用于组织“输入上下文”与“输出约束”。模板由两部分组成：
+
+1. **上下文输入**：合约信息、代码、可选的调用图上下文。
+2. **输出要求**：要求模型输出严格 JSON，字段名使用 snake_case。
+
+### 上下文输入结构
+
+模板通常包含以下可选字段，实际是否渲染由条件控制：
+
+- `{{if .EnableCallGraph}} ... {{end}}`：是否启用调用图增强上下文。
+- `{{.CallGraphInfo}}`：调用图统计信息，用于概览调用关系。
+- `{{.CallersCode}}`：调用者代码片段（谁调用了公开函数）。
+- `{{.CalleesCode}}`：被调用者代码片段（公开函数调用了谁）。
+
+Mode 1 的调用图增强模板示例可参考 [callgraph_enhanced.tmpl](../../../src/strategy/prompts/mode1/callgraph_enhanced.tmpl)。
+
+### 输出要求结构
+
+输出必须是“纯 JSON 文本”，不要包含 Markdown 代码块。字段名一律使用 snake_case。模板可输出额外字段（例如 `call_graph_analysis`），解析器会忽略未识别字段。
+
+建议在模板的“输出要求”中固定以下约束片段，并按本页的字段说明输出：
+
+```text
+输出要求：
+请仅输出一个合法的 JSON 对象，不要包含 Markdown 标记（如 ```json）。字段名必须使用 snake_case。建议始终返回 vulnerabilities（无漏洞返回空数组 []）。除下述字段外，可输出额外字段，解析器会忽略未识别字段。
+```
+
+### 提示词解析与变量注入
+
+提示词模板使用 Go 的 `text/template` 执行，变量来源与注入流程如下：
+
+- 模板加载：通过 [template_loader.go](../../../src/strategy/prompts/template_loader.go) 读取 `strategy/prompts/<mode>/<name>.tmpl`（支持从 `src/strategy/...` 目录读取）。
+- 输入文件处理（Mode 1 可选）：`-i` 指定的 TOML/sol 文件会被 [template_loader.go](../../../src/strategy/prompts/template_loader.go) 预处理为纯文本，并写入 `InputFileContent` 变量。
+- Mode 1 变量注入：扫描时构建 [PromptVariables](../../../src/strategy/prompts/builder.go)，并在 [mode1_targeted.go](../../../src/internal/handler/mode1_targeted.go) 中传入模板执行。
+- Mode 2 变量注入：逐条验证时在 [mode2_fuzzy.go](../../../src/internal/handler/mode2_fuzzy.go) 以 `map` 方式注入探测器字段（`DetectorCheck/Impact/Confidence/Description` 与 `LineNumbers`）。
+
+#### Mode 1 可用变量
+
+- `ContractAddress`：目标合约地址
+- `ContractCode`：目标合约源码（可能是清洗/裁剪后的版本）
+- `Strategy`：当前模板/策略名
+- `InputFileContent`：`-i` 输入文件处理后的内容
+- `EnableCallGraph`：是否启用调用图上下文
+- `CallGraphInfo`：调用图概要信息
+- `CallersCode`：调用者代码片段
+- `CalleesCode`：被调用者代码片段
+- `EnrichedContext`：完整调用链上下文
+- `TotalFunctions`：函数总数
+- `PublicFunctions`：公开函数数量
+- `InternalFunctions`：内部函数数量
+
+#### 调用图上下文触发条件
+
+模板中只要出现 `.EnableCallGraph` / `.CallGraphInfo` / `.CallersCode` / `.CalleesCode` / `.EnrichedContext` 任意一个字段，就会在预处理阶段构建调用图上下文（见 [mode1_targeted.go](../../../src/internal/handler/mode1_targeted.go)）。
+
+#### 统一输出约束注入
+
+模型请求发送前，解析器会在提示词末尾拼接固定的输出结构要求；如果模板未显式包含 Solidity 代码块，也会自动附加合约代码片段（见 [ai_manager.go](../../../src/internal/ai/ai_manager.go)）。
+
 ## Mode 1（定向扫描）输出格式：AnalysisResult
 
 Mode 1 的 `.tmpl` 模板建议输出一个根对象 `AnalysisResult`，用于生成风险摘要与漏洞列表。
